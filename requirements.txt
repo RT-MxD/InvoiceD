@@ -36,3 +36,6 @@ httpx>=0.27                  # FastAPI TestClient dependency
 #Streamlit to create a web app
 streamlit>=1.20.0
 pandas
+
+#DATABSE
+supabase
