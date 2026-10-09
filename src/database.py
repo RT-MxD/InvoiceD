@@ -2,8 +2,9 @@
 Database access layer: engine/session setup plus the small set of helpers the
 pipeline needs (dedupe check, persist an invoice, write to the audit log).
 
-Updated with new fields: buyer_company_name, ack_no, ack_date, buyer_order_no,
-eway_bill_no, igst/cgst/sgst, and line item hsn_code/quantity_unit/rate_per_unit.
+Updated with new fields: Company name, vendor name,details of receiver/Billed to, date, invoice no,
+state, bill amount, broker, due date, description, sales avg rate, e-way_bill_number
+Challan No.
 """
 from __future__ import annotations
 
