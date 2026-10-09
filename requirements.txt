@@ -1,0 +1,38 @@
+# ---- Core pipeline ----
+pydantic>=2.6,<3.0            # Typed schema + validation of extracted data
+SQLAlchemy>=2.0,<3.0         # ORM / database layer (works with SQLite, Postgres, MySQL)
+python-dotenv>=1.0           # Load configuration from .env
+PyYAML>=6.0                  # Read the guardrails.yaml rules file
+requests>=2.31              # Talk to the local Ollama HTTP API
+
+# ---- Invoice file parsing ----
+pdfplumber>=0.11             # Extract text from text-based PDF invoices
+
+# ---- OCR for scanned images & image-only PDFs (all free / open source) ----
+pytesseract>=0.3.10          # Python wrapper around the Tesseract OCR engine
+Pillow>=10.0                 # Image loading / preprocessing
+pdf2image>=1.17              # Rasterize scanned PDF pages so they can be OCR'd
+#   System binaries required (installed for you in the Docker image):
+#     - tesseract-ocr   (macOS: `brew install tesseract`)
+#     - poppler         (macOS: `brew install poppler`)
+
+# ---- Web API + browser UI (free, powered by the local Ollama model) ----
+fastapi>=0.110              # REST API
+uvicorn[standard]>=0.29     # ASGI server
+python-multipart>=0.0.9    # File uploads (multipart/form-data)
+
+# ---- Optional: fetch invoices from an email inbox (IMAP) ----
+# Uses only the Python standard library (imaplib/email), no extra dep needed.
+
+# ---- Optional database drivers (uncomment the one you use) ----
+psycopg[binary]>=3.0.0      # Modern PostgreSQL driver
+# PyMySQL>=1.1                # MySQL / MariaDB
+
+# ---- Dev / testing ----
+pytest>=8.0
+httpx>=0.27                  # FastAPI TestClient dependency
+
+
+#Streamlit to create a web app
+streamlit>=1.20.0
+pandas

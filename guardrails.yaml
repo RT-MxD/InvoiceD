@@ -1,0 +1,80 @@
+# =============================================================================
+# Guardrails configuration
+# -----------------------------------------------------------------------------
+# These rules are enforced AFTER the LLM extracts an invoice and BEFORE anything
+# is written to the database. Any invoice that fails a "block" rule is sent to
+# data/quarantine/ instead of being stored. "warn" rules are recorded but do not
+# stop the invoice. Tune everything here without touching the code.
+# =============================================================================
+
+# ---- 1. Required fields ------------------------------------------------------
+# The extraction is rejected if any of these come back empty/missing.
+required_fields:
+  - invoice_number
+  - company_name
+  - bill_amount
+
+# ---- 2. Field-level rules ----------------------------------------------------
+fields:
+  bill_amount:
+    min: 0.0            # totals cannot be negative
+    max: 1000000.0      # anything above this is almost certainly a parse error
+    max_auto_approve: 400000.0  # anything above this requires human review
+
+# ---- 3. Currency allow-list --------------------------------------------------
+# Only accept invoices in currencies the business actually deals in.
+allowed_currencies:
+  - USD
+  - EUR
+  - GBP
+  - INR
+  - CAD
+  - AUD
+
+# ---- 4. Arithmetic consistency ----------------------------------------------
+# Cross-check the numbers the model pulled out. Small rounding is allowed.
+arithmetic:
+  enabled: true
+  tolerance: 0.02                 # absolute currency tolerance for rounding
+  check_line_items_sum: true      # sum(line_items.amount) ~= bill_amount
+  check_total_breakdown: false     # disabled since subtotal/tax are removed
+
+# ---- 5. Date sanity ----------------------------------------------------------
+dates:
+  enabled: true
+  # Reject invoices dated absurdly far in the past or future (likely misreads).
+  max_age_days: 3650              # ~10 years old
+  max_future_days: 30             # invoices should not be dated far in the future
+  due_after_invoice: warn         # due_date should be >= invoice_date (warn only)
+
+# ---- 6. Model confidence -----------------------------------------------------
+# If the model is unsure, don't silently trust it.
+confidence:
+  min_to_store: 0.35              # below this -> quarantine
+  min_auto_approve: 0.75          # below this -> store but flag status=needs_review
+
+# ---- 7. Deduplication --------------------------------------------------------
+deduplication:
+  by_content_hash: true           # identical file already stored -> skip
+  by_company_and_number: true      # same company + invoice_number -> block as dup
+
+# ---- 8. Sensitive-data hygiene ----------------------------------------------
+# Prevent obvious PII/secret leakage from ending up in stored free-text fields.
+pii:
+  redact_in_raw_text: true
+  patterns:                       # regex patterns replaced with [REDACTED]
+    - name: credit_card
+      regex: '\b(?:\d[ -]*?){13,16}\b'
+    - name: iban
+      regex: '\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b'
+
+# ---- 9. Enforcement level per rule ------------------------------------------
+# "block" -> quarantine the invoice; "warn" -> allow but record the issue.
+enforcement:
+  required_fields: block
+  field_bounds: block
+  currency: block
+  arithmetic: warn
+  dates: warn
+  confidence: block
+  duplicate: block

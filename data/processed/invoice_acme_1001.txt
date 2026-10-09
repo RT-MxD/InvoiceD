@@ -1,0 +1,25 @@
+ACME OFFICE SUPPLIES LTD.
+123 Warehouse Road, Springfield, IL 62704
+VAT ID: US-99-1234567
+
+INVOICE
+
+Invoice Number: ACME-1001
+Invoice Date: 2026-06-15
+Due Date: 2026-07-15
+Bill To: Globex Corporation
+
+--------------------------------------------------------
+Description                Qty    Unit Price     Amount
+--------------------------------------------------------
+A4 Paper (box of 5 reams)   10        24.00      240.00
+Ballpoint Pens (pack 50)     5        12.50       62.50
+Stapler, heavy duty          3        18.00       54.00
+--------------------------------------------------------
+                                   Subtotal:      356.50
+                                   Tax (8%):       28.52
+                                   TOTAL DUE:     385.02
+
+Currency: USD
+Payment terms: Net 30
+Thank you for your business.
