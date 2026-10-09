@@ -186,8 +186,15 @@ def _fetch(session, base, path, method="GET", **kwargs):
                     409: "This record changed. Refresh before trying again.",
                     413: "The file exceeds the upload limit.", 422: "Check the submitted data."}
         return None, messages.get(status, f"Server error ({status}). Try Refresh."), status >= 500 or status == 429
-    except (ValueError, requests.RequestException):
-        return None, "Invalid server response. Refresh and check the result before retrying an action.", False
+    except ValueError:
+        text = response.text[:150].strip() if 'response' in locals() and hasattr(response, 'text') else ""
+        if "<html" in text.lower() or "<!doctype" in text.lower():
+            return None, "Server returned HTML instead of JSON. Ensure your API URL is correct and Vercel Deployment Protection is disabled.", False
+        return None, "Invalid JSON from server. Refresh and check the result before retrying an action.", False
+    except requests.RequestException as exc:
+        return None, f"Network request error: {exc}", False
+
+
 
 
 def _cached(path):
