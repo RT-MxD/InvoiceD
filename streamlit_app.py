@@ -41,7 +41,7 @@ def _make_http_session():
 st.set_page_config(page_title="D-Invoice • Workspace", page_icon="🧾", layout="wide", initial_sidebar_state="collapsed")
 
 PAGES = ["Dashboard", "Invoices", "Vendors", "Upload & Process", "Tools"]
-API_DEFAULT = os.getenv("INVOICE_API_URL", "http://localhost:8000").rstrip("/")
+API_DEFAULT = os.getenv("INVOICE_API_URL", "invoice-d-eight.vercel.app").rstrip("/")
 st.session_state.setdefault("api_base", API_DEFAULT)
 st.session_state.setdefault("read_cache", {})
 if "http_session" not in st.session_state:
