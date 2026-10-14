@@ -42,11 +42,11 @@ pip install -r requirements.txt
 ### 3. Configuration (.env)
 Create a `.env` file in the root directory:
 ```ini
-OPENROUTER_API_KEY=sk-or-v1-...
-OPENROUTER_MODEL=nvidia/nemotron-3-super-120b-a12b:free
+OPENROUTER_API_KEY=
+OPENROUTER_MODEL=
 
 # Neon Postgres URL
-DATABASE_URL=postgresql://user:pass@ep-host.aws.neon.tech/Invoice_D?sslmode=require
+DATABASE_URL=
 ```
 
 ### 4. Run the web UI (Streamlit & FastAPI)
