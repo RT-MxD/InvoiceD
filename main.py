@@ -75,11 +75,11 @@ def cmd_serve(args: argparse.Namespace) -> None:
     import sys
     import os
 
-    print(f"Invoice Pipeline API -> http://localhost:{args.port}")
+    print(f"Invoice Pipeline API -> https://invoiced-pzeb.onrender.com")
     print("Starting Streamlit UI...")
     
     env = os.environ.copy()
-    env["INVOICE_API_URL"] = f"http://localhost:{args.port}"
+    env["INVOICE_API_URL"] = os.getenv("INVOICE_API_URL", "https://invoiced-pzeb.onrender.com")"
     
     ui_process = subprocess.Popen(
         [sys.executable, "-m", "streamlit", "run", "streamlit_app.py"],
