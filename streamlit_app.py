@@ -422,6 +422,10 @@ def vendor_workspace():
         for row in data:
             name = str(row.get("vendor_name") or "").strip()
             if name:
+                names = {}
+        for row in data:
+            name = str(row.get("vendor_name") or "").strip()  # Strictly vendor_name
+            if name:
                 names.setdefault(vendor_key(name), name)
         matches = sorted((key for key in names if vendor_key(search) in key), key=lambda key: (key != vendor_key(search), key))
         if not matches:
@@ -429,21 +433,15 @@ def vendor_workspace():
             return
         if st.session_state.get("vendor_match") not in matches:
             st.session_state.pop("vendor_match", None)
-        selected = st.selectbox("Select company", matches, format_func=lambda key: names[key], key="vendor_match")
-        vendor_rows = [row for row in data if vendor_key(row.get("company_name")) == selected]
+        selected = st.selectbox("Select vendor", matches, format_func=lambda key: names[key], key="vendor_match")
+        vendor_rows = [
+            row for row in data
+            if vendor_key(row.get("vendor_name")) == selected  # Strictly match vendor_name
+        ]
         st.markdown("#### " + names[selected])
         amounts = [number(row.get("bill_amount")) for row in vendor_rows]
         cols = st.columns(4)
-        cols[0].metric("Company invoices", len(vendor_rows))
-        
-        invoice_value = sum(amount for amount in amounts if amount is not None)
-        paid_value = sum((number(row.get("paid_amount")) or 0.0) for row in vendor_rows if number(row.get("bill_amount")) is not None)
-        pending_value = sum((number(row.get("pending_amount")) or 0.0) for row in vendor_rows if number(row.get("bill_amount")) is not None)
-        
-        cols[1].metric("Total invoice value", format_inr(invoice_value))
-        cols[2].metric("Total payment paid", format_inr(paid_value))
-        cols[3].metric("Total pending payment", format_inr(pending_value))
-        
+        cols[0].metric("Vendor invoices", len(vendor_rows))        
         if any(amount is None for amount in amounts):
             st.caption("Invoices with missing or invalid amounts are excluded from these totals.")
             
